@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>PHP Madlib</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Cinzel" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../css/base.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Paul Heintz</h1>
+      <h4>Class 1 assignment</h4>
+      <h4>1/16/2018</h4>
+      <h4>Madlib using PHP</h4>
+    </header>
+    <hr />
+    <p>
+      Demonstration of using PHP to create a madlib webpage. Please fill out each
+      field with the corresponding word type and click submit for your madlib!
+    </p>
+
+    <form method="post" action="processed-madlib.php">
+      <table>
+        <tr>
+          <td><label>A noun: </label></td><td><input type="text" name="noun1" /></td>
+        </tr>
+        <tr>
+          <td><label>Another noun: </label></td><td><input type="text" name="noun2" /></td>
+        </tr>
+        <tr>
+          <td><label>One last noun: </label></td><td><input type="text" name="noun3" /></td>
+        </tr>
+        <tr>
+          <td><label>A location: </label></td><td><input type="text" name="location" /></td>
+        </tr>
+        <tr>
+          <td><label>A place (plural): </label></td><td><input type="text" name="places" /></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><input type="submit" value="Submit" /></td>
+        </tr>
+      </table>
+    </form>
+
+  </body>
+</html>
