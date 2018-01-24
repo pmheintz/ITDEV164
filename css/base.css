@@ -5,3 +5,6 @@ body {
 header h1, header h4 {
   margin: 0em;
 }
+.alert {
+	color: red;
+}
