@@ -42,7 +42,7 @@
         } else if ($radioBtn === 'no') {
           echo '<span class="alert">Really? You missed out</span>';
         } else {
-          echo '<span class="alert">Please answer this question?</span>';
+          echo '<span class="alert">Please answer this question</span>';
         }
       }
       ?>
