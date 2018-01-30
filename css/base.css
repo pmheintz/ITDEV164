@@ -8,3 +8,10 @@ header h1, header h4 {
 .alert {
 	color: red;
 }
+.primary {
+	color: blue;
+}
+.success {
+	color: lime;
+	text-shadow: 1px 1px 2px navy;
+}
