@@ -103,7 +103,7 @@
     <!-- Form for user's guess -->
     <form action="index.php" method="post">
       <label>Guess a whole number between 1-100:</label><br />
-      <input type="text" name="guess" <?php if($_SESSION['gameOn']){echo 'autofocus';} else {echo 'disabled';}?> />
+      <input type="number" name="guess" <?php if($_SESSION['gameOn']){echo 'autofocus';} else {echo 'disabled';}?> />
       <input type="submit" value="Guess" <?php if(!$_SESSION['gameOn']){echo 'disabled';}?> />
     </form>
 
