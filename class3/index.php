@@ -27,7 +27,7 @@
 
     <?php
       // Function to check if guess is within range
-      // Returns true if within range, false with a javascript alert if not
+      // Returns true if within range, false if not
       function rangeCheck($guess) {
           $inRange = true;
           if ($guess < 1 || $guess > 100) {
