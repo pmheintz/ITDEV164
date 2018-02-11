@@ -42,7 +42,7 @@ function displayHighScores() {
 		// Skip empty lines (if written)
 		$_SESSION['highScores'] = file('../../uploads/highscores.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		foreach ($_SESSION['highScores'] as $val) {
-			$scoreAndName = explode(' ', $val);
+			$scoreAndName = explode(' ', $val, 2); // Limit indices to 2 in case a full name was used
 			$name = array_pop($scoreAndName);
 			$score = implode(' ', $scoreAndName);
 			echo '<tr><td>'.$name.'</td><td>'.$score.'</td></tr>'.PHP_EOL;
@@ -64,6 +64,7 @@ function updateHighScores() {
 	while (sizeof($_SESSION['highScores']) > 5) {
 		array_pop($_SESSION['highScores']);
 	}
+	var_dump($_SESSION['highScores']);
 	writeHighScores();
 }
 
