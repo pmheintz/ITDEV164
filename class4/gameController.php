@@ -46,7 +46,6 @@ function displayHighScores() {
 			$name = array_pop($scoreAndName);
 			$score = implode(' ', $scoreAndName);
 			echo '<tr><td>'.$name.'</td><td>'.$score.'</td></tr>'.PHP_EOL;
-			// echo $val.'<br />';
 		}
 	} else {
 		echo 'No high scores yet!';
@@ -64,7 +63,6 @@ function updateHighScores() {
 	while (sizeof($_SESSION['highScores']) > 5) {
 		array_pop($_SESSION['highScores']);
 	}
-	var_dump($_SESSION['highScores']);
 	writeHighScores();
 }
 
