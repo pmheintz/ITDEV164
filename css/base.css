@@ -15,31 +15,45 @@ header h1, header h4 {
 	color: lime;
 	text-shadow: 1px 1px 2px navy;
 }
-table {
+.resultSet table {
 	border-collapse: collapse;
 }
-th {
+.resultSet th {
 	color: #FFFFFF;
 	background-color: #000000;
 }
-th:first-child {
+.resultSet th:first-child {
 	border-radius: 5px 0px 0px 0px;
 }
-th:last-child {
+.resultSet th:last-child {
 	border-radius: 0px 5px 0px 0px;
 }
-th, td {
+.resultSet th, .resultSet td {
 	padding: 0em 1em 0em 1em;
 	text-align: center;
 }
-td {
+.resultSet td {
 	border-right: 1px solid black;
 	border-left: 1px solid black;
 	border-bottom: 1px solid black;
 }
-tr:nth-child(even) {
+.resultSet tr:nth-child(even) {
 	background-color: lightcyan;
 }
-tr:hover {
+.resultSet tr:hover {
 	background-color: lightgreen;
+}
+fieldset {
+  width: fit-content;
+  border-radius: 5px;
+  background-color: lightgray;
+}
+legend {
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 0em 1em;
+}
+input[type=text] {
+  width: 20em;
 }

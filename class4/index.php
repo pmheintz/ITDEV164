@@ -1,4 +1,4 @@
-<?php session_start(); 
+<?php session_start();
       require 'gameController.php';
 ?>
 
@@ -23,18 +23,20 @@
 
     <!-- About -->
     <p>
-      This is the Hi-Low game developed in PHP. A number has been chosen between 1-100. 
-      Keep guessing numbers and you will be told if your number is higher or 
-      lower than the target number . See how many guesses it takes you to find the number! 
+      This is the Hi-Low game developed in PHP. A number has been chosen between 1-100.
+      Keep guessing numbers and you will be told if your number is higher or
+      lower than the target number . See how many guesses it takes you to find the number!
       This new version accesses a file to save and display high scores.
     </p>
     <h3>High Scores</h3>
-    <table>
-      <tr>
-        <th>Player Name</th><th>Guesses</th>
-      </tr>
-      <?php displayHighScores(); ?>
-    </table>
+    <div class="resultSet">
+      <table>
+        <tr>
+          <th>Player Name</th><th>Guesses</th>
+        </tr>
+        <?php displayHighScores(); ?>
+      </table>
+    </div>
     <hr />
 
     <!-- Display the number of guesses -->
@@ -43,10 +45,10 @@
     <form action="index.php" method="post">
       <label>Please enter your name:</label><br />
       <input type="text" name="playerName" id="player"
-      <?php if (!empty($_SESSION['playerName'])) { 
-        echo 'value="'.$_SESSION['playerName'].'" disabled'; 
-      } else { 
-        echo 'autofocus'; 
+      <?php if (!empty($_SESSION['playerName'])) {
+        echo 'value="'.$_SESSION['playerName'].'" disabled';
+      } else {
+        echo 'autofocus';
       } ?> /><br /><br />
       <label>Guess a whole number between 1-100:</label><br />
       <input type="number" name="guess" id="guessTxt"
