@@ -31,11 +31,13 @@ function addTodo($conn) {
       $result .= '</table>'.PHP_EOL.'</div>';
     } else {
       // SQL statement failed to execute
-      $result = '<h4 class="alert">Query failed with error message '.$stmt->error.'</h4>';
+      $result = '<h4 class="alert">Query failed with error message: '.$stmt->error.'</h4>';
     }
   }
   // Close SQL statement
-  $stmt->close();
+  if (!$stmt === false) {
+    $stmt->close();
+  }
   // Return function result
   return $result;
 }

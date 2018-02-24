@@ -28,7 +28,6 @@ require_once('dbFunctions.php');
     </p>
 
     <?php
-    var_dump($_POST);
     $requiredFieldAlert = '';
     $status = '';
     if (isset($_POST['Status'])) {$status = $_POST['Status'];}
