@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<?php
+// Include db connection (Used require because it terminates the script on error)
+require_once('dbconn.php');
+require_once('dbFunctions.php');
+?>
 <html>
   <head>
     <meta charset="UTF-8">
@@ -23,9 +28,6 @@
     </p>
 
     <?php
-    // Include db connection (Used require because it terminates the script on error)
-    require_once('dbconn.php');
-    require_once('todoDBFunc.php');
     var_dump($_POST);
     $requiredFieldAlert = '';
     $status = '';
@@ -36,20 +38,15 @@
       if (!empty($_POST['Description'])) {
         $requiredFieldAlert = '';
         $description = $_POST['Description'];
-        addTodo();
-        // Echo confirmation
-        echo '<h4>Row successfully added to database!</h4>';
-        echo '<div class="resultSet">'.PHP_EOL.'<table>';
-        echo '<tr><th>Description</th><th>Status</th><th>Priority</th></tr>';
-        echo '<tr><td>'.$_POST['Description'].'</td><td>'.$_POST['Status'].
-              '</td><td>'.$_POST['Priority'].'</td></tr>';
-        echo '</table>'.PHP_EOL.'</div>';
+        echo addTodo($conn);
         // Clear $_POST
         $_POST = array();
         // Prompt for additional todo
         echo '<br /><form method="post" action="index.php">';
         echo '<label>Add another todo?</label> <input type="submit" value="Yes" />';
         echo '</form>';
+        // Close DB connection
+        $conn->close();
         // Exit script to prevent reloading page
         exit();
       } else {
@@ -63,7 +60,6 @@
       <legend>Todo scheduler</legend>
       <form method="post" action="index.php">
         <table>
-          <br />
           <tr>
             <td><label>Description of your todo task: </label></td>
             <td><input type="text" name="Description"
@@ -113,6 +109,7 @@
             <td></td>
             <td><input type="submit" value="Submit"></td>
           </tr>
+        </table>
       </form>
     </fieldset>
   </body>

@@ -1,6 +1,4 @@
 <?php
-// For debugging
-ini_set('display_errors', 1);
 // Database connection attributes
 DEFINE('DB_USER', 'phpheintzpm');
 DEFINE('DB_PASSWORD', '1154112');
