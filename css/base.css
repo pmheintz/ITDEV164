@@ -5,6 +5,29 @@ body {
 header h1, header h4 {
   margin: 0em;
 }
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: lightgray;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+nav li {
+    float: left;
+}
+nav li a {
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+nav li a:hover {
+    background-color: #111111;
+    color: cyan;
+}
 .alert {
 	color: red;
 }
@@ -21,6 +44,10 @@ header h1, header h4 {
 .resultSet th {
 	color: #FFFFFF;
 	background-color: #000000;
+}
+.resultSet th a {
+  color: #FFFFFF;
+  text-decoration: none;
 }
 .resultSet th:first-child {
 	border-radius: 5px 0px 0px 0px;

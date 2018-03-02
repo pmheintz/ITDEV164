@@ -21,6 +21,15 @@ require_once('dbFunctions.php');
       <h4>Todo list using MySql database</h4>
     </header>
     <hr />
+    <nav>
+      <?php
+      // Insert navbar
+      if (file_exists('navbar.php')) {
+        include('navbar.php');
+      } else {
+        echo '<h4 class="alert">Navbar cannot be found!</h4>';
+      }  ?>
+    </nav>
 
     <!-- About -->
     <p>
@@ -85,9 +94,9 @@ require_once('dbFunctions.php');
               <option value="Complete"
                 <?php if ($status === "Complete") {echo ' selected';} ?>
                 >Complete</option>
-              <option value="Cancelled"
-                <?php if ($status === "Cancelled") {echo ' selected';} ?>
-                >Cancelled</option>
+              <option value="Canceled"
+                <?php if ($status === "Canceled") {echo ' selected';} ?>
+                >Canceled</option>
             </select></td>
           </tr>
           <tr>
