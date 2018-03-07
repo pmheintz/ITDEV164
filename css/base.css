@@ -21,7 +21,7 @@ nav li a {
     display: block;
     color: black;
     text-align: center;
-    padding: 14px 16px;
+    padding: .25em .5em;
     text-decoration: none;
 }
 nav li a:hover {
@@ -47,6 +47,10 @@ nav li a:hover {
 }
 .resultSet th a {
   color: #FFFFFF;
+  text-decoration: none;
+}
+.resultSet th a:hover {
+  color: cyan;
   text-decoration: none;
 }
 .resultSet th:first-child {
@@ -83,4 +87,25 @@ legend {
 }
 input[type=text] {
   width: 20em;
+}
+.pagination ul {
+  padding: 0em;
+}
+.pagination li {
+  padding: .25em .5em;
+  list-style: none;
+  float: left;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  border-left: 1px solid black;
+}
+.pagination li:last-child {
+  border-right: 1px solid black;
+}
+.pagination li a {
+  text-decoration: none;
+}
+.pagination li.current {
+  color: cyan;
+  background-color: black;
 }

@@ -44,12 +44,43 @@ function addTodo($conn) {
 
 // Function to display all todos in a table
 function getAllTodos($conn) {
+  /**  Pagination section **/
+    // Set the max rows to display per page
+    if (!isset($_GET['rows']) || $_GET['rows'] === 'all') {
+      $display = 1000000000; // High number to attempt to return all
+    } else {
+      $display = $_GET['rows'];
+    }
+
+    // Determine the number of pages
+    if (isset($_GET['pages']) && is_numeric($_GET['pages'])) {
+      $pages = $_GET['pages'];
+    } else {
+      $result = $conn->query('SELECT id FROM todo');
+      $records = $result->num_rows;
+
+      // Determine number of $pages
+      if ($records > $display) {
+        $pages = ceil($records/$display);
+      } else {
+        $pages = 1;
+      }
+    }
+
+    // Determine starting point for displayed rows
+    if (isset($_GET['start']) && is_numeric($_GET['start'])) {
+      $start = $_GET['start'];
+    } else {
+      $start = 0;
+    }
+  /** End of pagination section **/
+
   // Begin base SQL statement
   $sql = 'SELECT * FROM todo';
 
   // Get sorting parameters if any
-  if (isset($_GET['sort'])) { $sort = $_GET['sort']; } else { $sort = 'id'; }
-  if (isset($_GET['direction'])) { $direction = $_GET['direction']; } else { $direction = 'ASC'; }
+  $sort = (isset($_GET['sort'])) ? $_GET['sort'] : 'id';
+  $direction = (isset($_GET['direction'])) ? $_GET['direction'] : 'ASC';
 
   // Check to ensure sort and dirction are acceptable parameters (prevent injection)
   if (!in_array($sort, ['id', 'Description', 'Status', 'Priority'])) { $sort = 'id'; }
@@ -57,11 +88,13 @@ function getAllTodos($conn) {
 
   // Append sort parameters to SQL
   if ($sort === 'id' || $sort === 'Description') {
-    $sql .= ' ORDER BY '.$sort.' '.$direction;
+    $sql .= ' ORDER BY '.$sort.' '.$direction.' LIMIT '.$start.', '.$display;
   } else if ($sort === 'Status') {
-    $sql .= ' ORDER BY FIELD(`Status`, "Not started", "In progress", "Complete", "Canceled")'.$direction;
+    $sql .= ' ORDER BY FIELD(`Status`, "Not started", "In progress", "Complete", "Canceled")'
+            .$direction.' LIMIT '.$start.', '.$display;
   } else if ($sort === 'Priority') {
-    $sql .= ' ORDER BY FIELD(Priority, "High", "Normal", "Low")'.$direction;
+    $sql .= ' ORDER BY FIELD(Priority, "High", "Normal", "Low")'.$direction
+            .' LIMIT '.$start.', '.$display;
   }
 
   // Execute query
@@ -71,22 +104,22 @@ function getAllTodos($conn) {
   }
 
   // Set sorting direction (ascending/descending)
-  if ($direction === 'DESC') { $direction = 'ASC'; } else { $direction = 'DESC'; }
+  $direction = ($direction === 'DESC') ? 'ASC' : 'DESC';
 
   // Display table
   if ($result->num_rows > 0) {
     echo '<div class="resultSet">'.PHP_EOL.'<table>'.PHP_EOL;
     echo '<tr>'.PHP_EOL;
-    echo '<th><a href="todos.php?sort=id&direction=';
+    echo '<th><a href="todos.php?rows='.$display.'&sort=id&direction=';
     if ($sort !== 'id') { echo 'ASC'; } else { echo $direction; }
     echo '">ID</a></th>'.PHP_EOL;
-    echo '<th><a href="todos.php?sort=Description&direction=';
+    echo '<th><a href="todos.php?rows='.$display.'&sort=Description&direction=';
     if ($sort !== 'Description') { echo 'ASC'; } else { echo $direction; }
     echo '">Description</a></th>'.PHP_EOL;
-    echo '<th><a href="todos.php?sort=Status&direction=';
+    echo '<th><a href="todos.php?rows='.$display.'&sort=Status&direction=';
     if ($sort !== 'Status') { echo 'ASC'; } else { echo $direction; }
     echo '">Status</a></th>'.PHP_EOL;
-    echo '<th><a href="todos.php?sort=Priority&direction=';
+    echo '<th><a href="todos.php?rows='.$display.'&sort=Priority&direction=';
     if ($sort !== 'Priority') { echo 'ASC'; } else { echo $direction; }
     echo '">Priority</a></th>'.PHP_EOL.'</tr>'.PHP_EOL;
     // Insert data into table
@@ -98,6 +131,43 @@ function getAllTodos($conn) {
   } else {
     // No results were found in the database
     echo '<h4 class="alert">No results returned</h4>';
+  }
+
+  /** Generated html for Pagination **/
+  if ($pages > 1) {
+    // Keep sorting direction
+    if ($direction === 'ASC') {$direction = 'DESC';} else {$direction = 'ASC';}
+    // Get the current page
+    $currentPage = ($start/$display) + 1;
+    echo '<div class="pagination">'.PHP_EOL.'<ul>'.PHP_EOL;
+
+    // Set the previous button
+    if ($currentPage != 1) {
+      echo '<li><a href="todos.php?rows='.$display.'&start='.($start - $display).'&pages='.$pages
+            .'&sort='.$sort.'&direction='.$direction.'">Previous </a></li>'.PHP_EOL;
+    } else {
+      echo '<li><span style="color: gray;">Previous </span></li>'.PHP_EOL;
+    }
+
+    // Set the page numbers
+    for ($i = 1; $i <= $pages; $i++) {
+      if ($i != $currentPage) {
+        echo '<li><a href="todos.php?rows='.$display.'&start='.($display * ($i - 1)).'&pages='.$pages
+              .'&sort='.$sort.'&direction='.$direction.'">'. $i .'</a></li>'.PHP_EOL;
+      } else {
+        echo '<li class="current">'.$i.'</li>'.PHP_EOL;
+      }
+    }
+
+    // Set the next button
+    if ($currentPage != $pages) {
+      echo '<li><a href="todos.php?rows='.$display.'&start='.($start + $display).'&pages='.$pages
+            .'&sort='.$sort.'&direction='.$direction.'"> Next</a></li>'.PHP_EOL;
+    } else {
+      echo '<li><span style="color: gray;"> Next</span></li>'.PHP_EOL;
+    }
+
+    echo '</ul>'.PHP_EOL.'</div>';
   }
 }
 ?>
