@@ -49,7 +49,12 @@ function getAllTodos($conn) {
     if (!isset($_GET['rows']) || $_GET['rows'] === 'all') {
       $display = 1000000000; // High number to attempt to return all
     } else {
-      $display = $_GET['rows'];
+      if (!is_numeric($_GET['rows'])) {
+        echo '<h4 class="alert">** Error! Unacceptable value for rows **';
+        exit();
+      } else {
+        $display = $_GET['rows'];
+      }
     }
 
     // Determine the number of pages
