@@ -115,7 +115,7 @@ function getAllTodos($conn) {
   if ($result->num_rows > 0) {
     echo '<div class="resultSet">'.PHP_EOL.'<table>'.PHP_EOL;
     echo '<tr>'.PHP_EOL;
-    echo '<th><a href="todos.php?rows='.$display.'&sort=id&direction=';
+    echo '<th></th><th><a href="todos.php?rows='.$display.'&sort=id&direction=';
     if ($sort !== 'id') { echo 'ASC'; } else { echo $direction; }
     echo '">ID</a></th>'.PHP_EOL;
     echo '<th><a href="todos.php?rows='.$display.'&sort=Description&direction=';
@@ -129,7 +129,9 @@ function getAllTodos($conn) {
     echo '">Priority</a></th>'.PHP_EOL.'</tr>'.PHP_EOL;
     // Insert data into table
     while ($row = $result->fetch_assoc()) {
-      echo '<tr>'.PHP_EOL.'<td>'.$row['id'].'</td><td>'.$row['Description'].'</td><td>'
+      echo '<tr>'.PHP_EOL;
+      echo '<td><a href="edit_todo.php?id='.$row['id'].'">Update</a> &nbsp; <a href="delete_todo.php?id='.$row['id'].'">Delete</a></td>'.PHP_EOL;
+      echo '<td>'.$row['id'].'</td><td>'.$row['Description'].'</td><td>'
             .$row['Status'].'</td><td>'.$row['Priority'].'</td>'.PHP_EOL.'</tr>'.PHP_EOL;
     }
     echo '</table>'.PHP_EOL.'</div>'.PHP_EOL;
@@ -175,4 +177,99 @@ function getAllTodos($conn) {
     echo '</ul>'.PHP_EOL.'</div>';
   }
 }
+
+// Function to get single row from database
+function getSingleRow($conn, $id) {
+  // Result of query
+  $result = '';
+
+  // SQL query
+  $sql = "SELECT * FROM todo WHERE id=?";
+
+  // Prepare statement
+  $stmt = $conn->prepare($sql);
+
+  // Bind parameters and execute
+  if ($stmt === false) {
+    $result = '<span class="alert">** ERROR IN SQL SELECT STATEMENT. Please file bug report. **</span>';
+  } else {
+    $stmt->bind_param('i', $id);
+    if (!$stmt->execute()) {
+      // Statement failed to execute
+      $result = '<h4 class="alert">Query failed with error message: '.$stmt->error.'</h4>';
+    } else {
+      // Assign result
+      $row = $stmt->get_result();
+      $result = $row->fetch_assoc();
+    }
+  }
+  // Close statement and return result
+  $stmt->close();
+  return $result;
+}
+
+// Function to update a row in the table
+function updateRow($conn, $fields) {
+  // Result of the query
+  $result = '';
+
+  // SQL query
+  $sql = "UPDATE todo SET Description=?, `Status`=?, Priority=? WHERE id=?";
+
+  // Prepare statement
+  $stmt = $conn->prepare($sql);
+
+  // Bind parameters and execute
+  if ($stmt === false) {
+    $result = '<span class="alert">** ERROR IN SQL UPDATE STATEMENT. Please file bug report. **</span>';
+  } else {
+    $stmt->bind_param('sssi', $fields['Description'], $fields['Status'], $fields['Priority'], $fields['id']);
+    if (!$stmt->execute()) {
+      // Statement failed to execute
+      $result = '<h4 class="alert">Query failed with error message: '.$stmt->error.'</h4>';
+    } else {
+      if ($stmt->affected_rows > 0) {
+        $result = '<h4 class="primary">Success! '.$stmt->affected_rows.' row(s) updated.</h4>';
+      } else {
+        $result = '<h4 class="primary">Success! However, no rows were changed.</h4>';
+      }
+    }
+  }
+  // Close statement and return result
+  $stmt->close();
+  return $result;
+}
+
+// Function to delete a row from the table
+function deleteRow($conn, $id) {
+  // Result of the query
+  $result = '';
+
+  // SQL query
+  $sql = "DELETE FROM todo WHERE id=?";
+
+  // Prepare statement
+  $stmt = $conn->prepare($sql);
+
+  // Bind parameters and execute
+  if ($stmt === false) {
+    $result = '<span class="alert">** ERROR IN SQL DELETE STATEMENT. Please file bug report. **</span>';
+  } else {
+    $stmt->bind_param('i', $id);
+    if (!$stmt->execute()) {
+      // Statement failed to execute
+      $result = '<h4 class="alert">Query failed with error message: '.$stmt->error.'</h4>';
+    } else {
+      // Delete was successful
+      if ($stmt->affected_rows > 0) {
+        $result = '<h4 class="primary">Success! '.$stmt->affected_rows.' row(s) deleted.</h4>';
+      } else {
+        $result = '<h4 class="primary">Success! However, no rows were changed.</h4>';
+      }
+    }
+  }
+  $stmt->close();
+  return $result;
+}
+
 ?>
