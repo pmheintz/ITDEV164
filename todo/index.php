@@ -36,81 +36,57 @@ require_once('dbFunctions.php');
       This is a web app for inserting todo activites into a MySql database.
     </p>
 
+    <!-- Content -->
     <?php
-    $requiredFieldAlert = '';
-    $status = '';
-    if (isset($_POST['Status'])) {$status = $_POST['Status'];}
-    $priority = '';
-    if (isset($_POST['Priority'])) {$priority = $_POST['Priority'];}
-    if (isset($_POST['Description'])) {
-      if (!empty($_POST['Description'])) {
-        $requiredFieldAlert = '';
-        $description = $_POST['Description'];
-        echo addTodo($conn);
-        // Clear $_POST
-        $_POST = array();
-        // Prompt for additional todo
-        echo '<br /><form method="post" action="index.php">';
-        echo '<label>Add another todo?</label> <input type="submit" value="Yes" />';
-        echo '</form>';
-        // Close DB connection
-        $conn->close();
-        // Exit script to prevent reloading page
-        exit();
+    $params = [
+      'Description'=>'',
+      'Status'=>'Not started',
+      'Priority'=>'Normal',
+    ];
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+      $params = $_POST;
+      if (empty($_POST['Description'])) {
+        echo '<h4 class="alert">Description can not be empty!</h4>';
       } else {
-        // Set alert to be displayed because description is empty
-        $requiredFieldAlert = '<span class="alert">** Description cannot be empty **</span>';
+        echo addRow($conn, $_POST);
+        echo '<h4 class="primary">"'.$_POST['Description'].'" added to your list!</h4>';
+        echo '<a href="index.php">Add another task</a> - <a href="todos.php">View my list</a>';
+        exit();
       }
     }
     ?>
 
     <fieldset>
-      <legend>Todo scheduler</legend>
+      <legend>Add a todo</legend>
       <form method="post" action="index.php">
         <table>
           <tr>
             <td><label>Description of your todo task: </label></td>
-            <td><input type="text" name="Description"
-              <?php
-              // Put entered value into text field if exists, else autofocus on the field
-              if (isset($_POST['Description']) && !empty($_POST['Description'])) {
-                echo 'value="'.$_POST['Description'].'" ';
-              } else {echo ' autofocus';} ?> />
-            </td>
-            <?php
-            // Display error if description is empty
-            echo $requiredFieldAlert;
-            ?>
+            <td><input type="text" name="Description" 
+              <?php if (!empty($params['Description'])) {echo $params['Description'];} else {echo 'autofocus';} ?>></td>
           </tr>
           <tr>
             <td><label>Status of your task: </label></td>
             <td><select name="Status">
-              <option value="Not started"
-                <?php if($status === "Not started" || empty($_POST['Status'])) {echo ' selected';} ?>
-                >Not started</option>
-              <option value="In progress"
-                <?php if ($status === "In progress") {echo ' selected';} ?>
-                >In progress</option>
-              <option value="Complete"
-                <?php if ($status === "Complete") {echo ' selected';} ?>
-                >Complete</option>
-              <option value="Canceled"
-                <?php if ($status === "Canceled") {echo ' selected';} ?>
-                >Canceled</option>
+              <option value="Not started" 
+                <?php if ($params['Status'] === "Not started") {echo 'selected';} ?>>Not Started</option>
+              <option value="In progress" 
+                <?php if ($params['Status'] === "In progress") {echo 'selected';} ?>>In progress</option>
+              <option value="Completed" 
+                <?php if ($params['Status'] === "Completed") {echo 'selected';} ?>>Completed</option>
+              <option value="Canceled" 
+                <?php if ($params['Status'] === "Canceled") {echo 'selected';} ?>>Canceled</option>
             </select></td>
           </tr>
           <tr>
-            <td><label>Task priority: </label></td>
+            <td><label>Task Priority: </label></td>
             <td><select name="Priority">
-              <option value="High"
-                <?php if ($priority === "High") {echo ' selected';} ?>
-                >High</option>
-              <option value="Normal"
-                <?php if ($priority === "Normal" || empty($_POST['Priority'])) {echo ' selected';} ?>
-                >Normal</option>
-              <option value="Low"
-                <?php if ($priority === "Low") {echo ' selected';} ?>
-                >Low</option>
+              <option value="High" 
+                <?php if ($params['Priority'] === "High") {echo 'selected';} ?>>High</option>
+              <option value="Normal" 
+                <?php if ($params['Priority'] === "Normal") {echo 'selected';} ?>>Normal</option>
+              <option value="Low" 
+                <?php if ($params['Priority'] === "Low") {echo 'selected';} ?>>Low</option>
             </select></td>
           </tr>
           <tr>
@@ -120,5 +96,6 @@ require_once('dbFunctions.php');
         </table>
       </form>
     </fieldset>
+
   </body>
-</html>
+  </html>

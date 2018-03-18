@@ -1,184 +1,185 @@
 <?php
-// Function to add a todo to the Database
-function addTodo($conn) {
-  // Variable to hold result
-  $result = '';
+/*
+/	Function to add a row into the database
+/	$conn - connection to the database
+/	$params - array of fields to add to the database
+/	returns string with result of INSERT INTO
+*/
+function addRow($conn, $params) {
+	// Return string
+	$result = '';
 
-  // SQL statement
-  $sql = "INSERT INTO todo (Description, Status, Priority) VALUES (?, ?, ?)";
+	// SQL statement
+	$sql = "INSERT INTO todo (Description, `Status`, Priority) VALUES (?, ?, ?)";
 
-  // Prepare statement
-  $stmt = $conn->prepare($sql);
+	// Prepare statement
+	$stmt = $conn->prepare($sql);
 
-  // Check to ensure SQL statement is OK, bind paramaters and execute if yes
-  if ($stmt === false) {
-    $result = '<span class="alert">** ERROR IN SQL INSERT STATEMENT. Please file bug report. **</span>';
-  } else {
-    $stmt->bind_param('sss',  $_POST['Description'], $_POST['Status'], $_POST['Priority']);
-    // Execute SQL statement
-    if ($stmt->execute()) {
-      // Add affected rows to $result
-      if ($stmt->affected_rows > 0) {
-        $result = '<h4 class="primary">Success! '.$stmt->affected_rows.' row(s) affected in todo database</h4>';
-      } else if ($stmt->affected_rows === 0) {
-        $result = '<h4 class="primary">Success, but no rows changed in todo database.</h4>';
-      }
-      // Add data echo to result
-      $result .= '<div class="resultSet">'.PHP_EOL.'<table>';
-      $result .= '<tr><th>Description</th><th>Status</th><th>Priority</th></tr>';
-      $result .= '<tr><td>'.$_POST['Description'].'</td><td>'.$_POST['Status'].
-                 '</td><td>'.$_POST['Priority'].'</td></tr>';
-      $result .= '</table>'.PHP_EOL.'</div>';
-    } else {
-      // SQL statement failed to execute
-      $result = '<h4 class="alert">Query failed with error message: '.$stmt->error.'</h4>';
-    }
-  }
-  // Close SQL statement
-  if (!$stmt === false) {
-    $stmt->close();
-  }
-  // Return function result
-  return $result;
+	// Check if statement is ok
+	if ($stmt === false) {
+		// There's an error in the SQL prepared statement
+		$result = '<h4 class="alert">** ERROR IN SQL INSERT STATEMENT. Please file bug report. **</h4>';
+	} else {
+		// Statement is ok, bind parameters
+		$stmt->bind_param('sss', $params['Description'], $params['Status'], $params['Priority']);
+		// Attempt to execute statement
+		if ($stmt->execute()) {
+			// Statement was successful, check affected rows
+			if ($stmt->affected_rows > 0) {
+				$result = '<h4 class="primary">Success! '.$stmt->affected_rows.' row added.</h4>';
+			} else if ($stmt->affected_rows === 0) {
+				$result = '<h4 class="primary">Success, but no rows changed.</h4>';
+			}
+		} else {
+			// SQL statement failed to execute
+			$result = '<h4 class="alert">Query failed with error message: '.$stmt->error.'</h4>';
+		}
+	}
+
+	// Close statement
+	$stmt->close();
+
+	// Return result
+	return $result;
 }
 
-// Function to display all todos in a table
-function getAllTodos($conn) {
-  /**  Pagination section **/
-    // Set the max rows to display per page
-    if (!isset($_GET['rows']) || $_GET['rows'] === 'all') {
-      $display = 1000000000; // High number to attempt to return all
-    } else {
-      if (!is_numeric($_GET['rows'])) {
-        echo '<h4 class="alert">** Error! Unacceptable value for rows **';
-        exit();
-      } else {
-        $display = $_GET['rows'];
-      }
-    }
+/*
+/	Function to get number of rows in database
+/	$conn - connection to the database
+/	returns integer number of rows
+*/
+function getNumRows($conn) {
+	$totalRows = 0;
+	if ($result = $conn->query("SELECT id FROM todo")) {
+	    $totalRows = $result->num_rows;
 
-    // Determine the number of pages
-    if (isset($_GET['pages']) && is_numeric($_GET['pages'])) {
-      $pages = $_GET['pages'];
-    } else {
-      $result = $conn->query('SELECT id FROM todo');
-      $records = $result->num_rows;
+		// Close query
+		$result->close();
+	}
 
-      // Determine number of $pages
-      if ($records > $display) {
-        $pages = ceil($records/$display);
-      } else {
-        $pages = 1;
-      }
-    }
-
-    // Determine starting point for displayed rows
-    if (isset($_GET['start']) && is_numeric($_GET['start'])) {
-      $start = $_GET['start'];
-    } else {
-      $start = 0;
-    }
-  /** End of pagination section **/
-
-  // Begin base SQL statement
-  $sql = 'SELECT * FROM todo';
-
-  // Get sorting parameters if any
-  $sort = (isset($_GET['sort'])) ? $_GET['sort'] : 'id';
-  $direction = (isset($_GET['direction'])) ? $_GET['direction'] : 'ASC';
-
-  // Check to ensure sort and dirction are acceptable parameters (prevent injection)
-  if (!in_array($sort, ['id', 'Description', 'Status', 'Priority'])) { $sort = 'id'; }
-  if (!in_array($direction, ['ASC', 'DESC'])) { $direction = 'ASC'; }
-
-  // Append sort parameters to SQL
-  if ($sort === 'id' || $sort === 'Description') {
-    $sql .= ' ORDER BY '.$sort.' '.$direction.' LIMIT '.$start.', '.$display;
-  } else if ($sort === 'Status') {
-    $sql .= ' ORDER BY FIELD(`Status`, "Not started", "In progress", "Complete", "Canceled")'
-            .$direction.' LIMIT '.$start.', '.$display;
-  } else if ($sort === 'Priority') {
-    $sql .= ' ORDER BY FIELD(Priority, "High", "Normal", "Low")'.$direction
-            .' LIMIT '.$start.', '.$display;
-  }
-
-  // Execute query
-  if (!$result = $conn->query($sql)) {
-    echo '<h4 class="alert">There was an error with the query executing on the database!</h4>';
-    return;
-  }
-
-  // Set sorting direction (ascending/descending)
-  $direction = ($direction === 'DESC') ? 'ASC' : 'DESC';
-
-  // Display table
-  if ($result->num_rows > 0) {
-    echo '<div class="resultSet">'.PHP_EOL.'<table>'.PHP_EOL;
-    echo '<tr>'.PHP_EOL;
-    echo '<th></th><th><a href="todos.php?rows='.$display.'&sort=id&direction=';
-    if ($sort !== 'id') { echo 'ASC'; } else { echo $direction; }
-    echo '">ID</a></th>'.PHP_EOL;
-    echo '<th><a href="todos.php?rows='.$display.'&sort=Description&direction=';
-    if ($sort !== 'Description') { echo 'ASC'; } else { echo $direction; }
-    echo '">Description</a></th>'.PHP_EOL;
-    echo '<th><a href="todos.php?rows='.$display.'&sort=Status&direction=';
-    if ($sort !== 'Status') { echo 'ASC'; } else { echo $direction; }
-    echo '">Status</a></th>'.PHP_EOL;
-    echo '<th><a href="todos.php?rows='.$display.'&sort=Priority&direction=';
-    if ($sort !== 'Priority') { echo 'ASC'; } else { echo $direction; }
-    echo '">Priority</a></th>'.PHP_EOL.'</tr>'.PHP_EOL;
-    // Insert data into table
-    while ($row = $result->fetch_assoc()) {
-      echo '<tr>'.PHP_EOL;
-      echo '<td><a href="edit_todo.php?id='.$row['id'].'">Update</a> &nbsp; <a href="delete_todo.php?id='.$row['id'].'">Delete</a></td>'.PHP_EOL;
-      echo '<td>'.$row['id'].'</td><td>'.$row['Description'].'</td><td>'
-            .$row['Status'].'</td><td>'.$row['Priority'].'</td>'.PHP_EOL.'</tr>'.PHP_EOL;
-    }
-    echo '</table>'.PHP_EOL.'</div>'.PHP_EOL;
-  } else {
-    // No results were found in the database
-    echo '<h4 class="alert">No results returned</h4>';
-  }
-
-  /** Generated html for Pagination **/
-  if ($pages > 1) {
-    // Keep sorting direction
-    if ($direction === 'ASC') {$direction = 'DESC';} else {$direction = 'ASC';}
-    // Get the current page
-    $currentPage = ($start/$display) + 1;
-    echo '<div class="pagination">'.PHP_EOL.'<ul>'.PHP_EOL;
-
-    // Set the previous button
-    if ($currentPage != 1) {
-      echo '<li><a href="todos.php?rows='.$display.'&start='.($start - $display).'&pages='.$pages
-            .'&sort='.$sort.'&direction='.$direction.'">Previous </a></li>'.PHP_EOL;
-    } else {
-      echo '<li><span style="color: gray;">Previous </span></li>'.PHP_EOL;
-    }
-
-    // Set the page numbers
-    for ($i = 1; $i <= $pages; $i++) {
-      if ($i != $currentPage) {
-        echo '<li><a href="todos.php?rows='.$display.'&start='.($display * ($i - 1)).'&pages='.$pages
-              .'&sort='.$sort.'&direction='.$direction.'">'. $i .'</a></li>'.PHP_EOL;
-      } else {
-        echo '<li class="current">'.$i.'</li>'.PHP_EOL;
-      }
-    }
-
-    // Set the next button
-    if ($currentPage != $pages) {
-      echo '<li><a href="todos.php?rows='.$display.'&start='.($start + $display).'&pages='.$pages
-            .'&sort='.$sort.'&direction='.$direction.'"> Next</a></li>'.PHP_EOL;
-    } else {
-      echo '<li><span style="color: gray;"> Next</span></li>'.PHP_EOL;
-    }
-
-    echo '</ul>'.PHP_EOL.'</div>';
-  }
+	return $totalRows;
 }
 
-// Function to get single row from database
+/*
+/	Function to get the number of pages for pagination
+/	$conn - connection to the database
+/	$rowsPerPage - rows per page
+/	returns integer number of pages, 0 if there's no rows
+*/
+function getNumPages($conn, $rowsPerPage) {
+	// Get number of rows in database
+	$result = $conn->query('SELECT id FROM todo');
+	$totalRows = $result->num_rows;
+
+	// Check if there are any rows
+	if ($totalRows !== 0) {
+		// If there's more rows then rows per page, calculate number of pages
+		if (is_numeric($rowsPerPage) && $totalRows > $rowsPerPage) {
+			$pages = ceil($totalRows/$rowsPerPage);
+		} else {
+			$pages = 1;
+		}
+	} else {
+		$pages = 0; // No rows, no pages
+	}
+
+	return $pages;
+}
+
+/*
+/	Function to get all rows from todo table
+/	$conn - connection to the database
+/	$orderBy - column to order by
+/	$direction - ascending(ASC) or decending(DSC)
+/	returns a result object or 0 if no results found
+*/
+function getAllTodos($conn, $orderBy, $direction) {
+	// Base sql statement
+	$sql = "SELECT id, Description, `Status`, Priority FROM todo ORDER BY ";
+
+	// Append sorting parameters
+	if ($orderBy === 'id' || $orderBy === 'Description') {
+		$sql .= "$orderBy $direction";
+	} else if ($orderBy === 'Status') {
+	    $sql .= "FIELD(`Status`, \"Not started\", \"In progress\", \"Complete\", \"Canceled\") $direction";
+	} else if ($orderBy === 'Priority') {
+	    $sql .= "FIELD(Priority, \"High\", \"Normal\", \"Low\") $direction";
+	}
+
+	// Prepare statement
+	$stmt = $conn->prepare($sql);
+
+	// Check if statement is ok
+	if ($stmt === false) {
+		// There's an error in the SQL prepared statement
+		$result = '<h4 class="alert">** ERROR IN SQL SELECT STATEMENT. Please file bug report. **</h4>';
+	} else {
+		if ($stmt->execute()) {
+			// Statement executed successfully
+			$result = $stmt->get_result();
+		} else {
+			// SQL statement failed to execute
+			$result = '<h4 class="alert">Query failed with error message: '.$stmt->error.'</h4>';
+		}
+	}
+
+	// Close statement and return results
+	$stmt->close();
+	return $result;
+}
+
+/*
+/	Function to get all rows within a range
+/	$conn - connection to the database
+/	$orderBy - column to order by
+/	$direction - ascending(ASC) or decending(DSC)
+/	$start - the starting point for the rows to get
+/	$display - how many rows to get
+/	returns a result object or 0 if no results found
+*/
+function getTodosWithRange($conn, $orderBy, $direction, $start, $display) {
+	// Base SQL query
+	$sql = 'SELECT id, Description, `Status`, Priority FROM todo';
+
+	// Append parameters
+	if ($orderBy === 'id' || $orderBy === 'Description') {
+		$sql .= ' ORDER BY '.$orderBy.' '.$direction.' LIMIT '.$start.', '.$display;
+	} else if ($orderBy === 'Status') {
+	    $sql .= ' ORDER BY FIELD(`Status`, "Not started", "In progress", "Complete", "Canceled")'
+	            .$direction.' LIMIT '.$start.', '.$display;
+	} else if ($orderBy === 'Priority') {
+	    $sql .= ' ORDER BY FIELD(Priority, "High", "Normal", "Low")'.$direction
+	            .' LIMIT '.$start.', '.$display;
+	}
+
+	// Prepare statement
+	$stmt = $conn->prepare($sql);
+
+	// Check if statement is ok
+	if ($stmt === false) {
+		// There's an error in the SQL prepared statement
+		$result = '<h4 class="alert">** ERROR IN SQL SELECT STATEMENT. Please file bug report. **</h4>';
+	} else {
+		if ($stmt->execute()) {
+			// Statement executed successfully
+			$result = $stmt->get_result();
+		} else {
+			// SQL statement failed to execute
+			$result = '<h4 class="alert">Query failed with error message: '.$stmt->error.'</h4>';
+		}
+	}
+
+	// Close statement and return results
+	$stmt->close();
+	return $result;
+}
+
+/*
+/ Function to get single row from database
+/ $conn - connection to the database
+/ $id - primary key for row to get
+/ returns the row that was queried
+*/
 function getSingleRow($conn, $id) {
   // Result of query
   $result = '';
@@ -208,7 +209,12 @@ function getSingleRow($conn, $id) {
   return $result;
 }
 
-// Function to update a row in the table
+/*
+/ Function to update a row in the table
+/ $conn - connection to the database
+/ $fields - associative array containing fields to update
+/ returns string displaying results from update
+*/
 function updateRow($conn, $fields) {
   // Result of the query
   $result = '';
@@ -240,7 +246,12 @@ function updateRow($conn, $fields) {
   return $result;
 }
 
-// Function to delete a row from the table
+/*
+/ Function to delete a row from the table
+/ $conn - connection to database
+/ $id - id of row to delete
+/ returns string displaying results from delete
+*/
 function deleteRow($conn, $id) {
   // Result of the query
   $result = '';

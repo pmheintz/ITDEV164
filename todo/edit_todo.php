@@ -36,44 +36,54 @@ require_once('dbFunctions.php');
       This is a web app for updating todo activites from a MySql database.
     </p>
 
+    
     <?php
+    // Boolean to determine if update has been performed
     $update = false;
+    // Array to hold row information
     $fields = [];
+    // Check if page is being loaded for the first time
     if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-    	$fields = getSingleRow($conn, $_GET['id']);
+      $fields = getSingleRow($conn, $_GET['id']);
     } else if (isset($_POST['id']) && is_numeric($_POST['id'])) {
-    	$fields = $_POST;
+      // An update has occurred, assign posted fields to fields array
+      $fields = $_POST;
     } else {
-    	echo '<h4 class="alert">No todo id provided. Can not update.</h4>';
-    	echo '<a href="todos.php">Return to todo list</a>';
-    	exit();
+      // Page was accessed incorrectly
+      echo '<h4 class="alert">No todo id provided. Can not update.</h4>';
+      echo '<a href="todos.php">Return to todo list</a>';
+      exit();
     }
 
     // Check if form has been submitted
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    	if (empty($_POST['Description'])) {
-    		echo '<h4 class="alert">Description can not be empty!</h4>';
-    		$row = getSingleRow($conn, $_POST['id']);
-    		$fields = $row;
-    	} else {
-    		$fields = $_POST;
-    		echo updateRow($conn, $fields);
-    		$update = true;
-    	}
+      // Required field check
+      if (empty($_POST['Description'])) {
+        // Required field empty, populate fields with previous results
+        echo '<h4 class="alert">Description can not be empty!</h4>';
+        $fields = $_POST;
+      } else {
+        // Everything's ok, update row
+        $fields = $_POST;
+        echo updateRow($conn, $fields);
+        // Disable fields after successful update so they can be seen but not changed
+        $update = true;
+      }
     }
     ?>
 
+    <!-- Form to update a todo task -->
     <fieldset>
-    	<legend>Edit A Todo</legend>
-    	<form action="edit_todo.php" method="post">
-		<table>
-			<tr>
-				<td><label>Description of your todo task: </label></td>
-	            <td><input type="text" name="Description" 
-	            	<?php if (!empty($fields['Description'])) {echo 'value="'.$fields['Description'].'"';}
-	            	if ($update) {echo ' disabled';} ?>></td>
-	        </tr>
-	        <tr>
+      <legend>Edit A Todo</legend>
+      <form action="edit_todo.php" method="post">
+    <table>
+      <tr>
+        <td><label>Description of your todo task: </label></td>
+              <td><input type="text" name="Description" 
+                <?php if (!empty($fields['Description'])) {echo 'value="'.$fields['Description'].'"';}
+                if ($update) {echo ' disabled';} ?>></td>
+          </tr>
+          <tr>
             <td><label>Status of your task: </label></td>
             <td><select name="Status" <?php if ($update) {echo ' disabled';} ?>>
               <option value="Not started"
@@ -109,16 +119,19 @@ require_once('dbFunctions.php');
             <?php echo '<input type="hidden" name="id" value="'.$fields['id'].'">'; ?>
             <td><input type="submit" value="Update" <?php if ($update) {echo ' disabled';} ?>></td>
           </tr>
-	    </table>
-    	</form>
+      </table>
+      </form>
     </fieldset>
     <?php 
+    // Return to todo list link
     if ($update) {
-		echo '<br /><a href="todos.php">Return to todos list</a>';
+    echo '<br /><a href="todos.php">Return to todos list</a>';
     } else {
-    	echo '<p><a href="todos.php">Cancel</a></p>';
+      echo '<p><a href="todos.php">Cancel</a></p>';
     }
+    // Close database connection
     $conn->close();
     ?>
+    
 </body>
 </html>

@@ -39,10 +39,13 @@ require_once('dbFunctions.php');
     <?php 
       // Check if id is set in get or post
       if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
+        // Row has not been deleted, get the row data
         $fields = getSingleRow($conn, $_GET['id']);
       } else if (isset($_POST['id']) && is_numeric($_POST['id'])) {
+        // Delete was NOT confirmed, retrieve row data
         $fields = $_POST;
       } else {
+        // Can not delete, no row id
         echo '<h4 class="alert">No todo id provided. Can not delete any records.</h4>';
         echo '<p><a href="todos.php">Return to todo list</a></p>';
         exit();
@@ -58,9 +61,14 @@ require_once('dbFunctions.php');
         } else {
           // Delete canceled, return to todo list
           echo '<h4 class="primary">Delete canceled.</h4>';
-          echo '<p>Redirecting to <a href="todos.php">todos</a> in 5 seconds...';
+          echo '<p id="redirect">Redirecting to <a href="todos.php">todos</a> in 5 seconds... <br />';
+          echo '<a href="delete_todo.php?id='.$fields['id'].'" id="stay">Stay here</a></p>';
           echo '<script type="text/javascript">
                   setTimeout("window.location=\'todos.php\'",5000);
+                  document.getElementById("stay").onclick = function() {
+                    clearTimeout();
+                    document.getElementById("redirect").innerHTML("");
+                  }
                 </script>';
         }
       } else {
