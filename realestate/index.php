@@ -32,6 +32,9 @@ require_once('dbconn.php');
     if (!$row = $stmt->fetch()) {
       exit('<h4 class="alert">No houses available in database</h4>');
     }
+
+    // Function to ensure html special characters are properly returned
+    function hsc($str) { return htmlspecialchars($str); }
     ?>
 
     <!-- Content -->
@@ -53,7 +56,7 @@ require_once('dbconn.php');
                 $stmt = $pdo->query('SELECT DISTINCT city FROM houses ORDER BY city ASC');
                 echo '<option value="Any">Any</option>';
                 while ($row = $stmt->fetch()) {
-                  echo '<option value="'.$row['city'].'">'.$row['city'].'</option>'.PHP_EOL;
+                  echo '<option value="'.hsc($row['city']).'">'.hsc($row['city']).'</option>'.PHP_EOL;
                 }
               ?>
             </select></td>

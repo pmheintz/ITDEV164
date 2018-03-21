@@ -28,27 +28,34 @@ require_once('dbconn.php');
 
     <?php
     if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-      exit('<h4 class="alert">No query data. Please search from <a href="index.php">this</a> page.</h4>');
+      exit('<h4 class="alert">No query data. Please search from <a href="index.php">this</a> page.</h4></body></html>');
     }
+
+    // Function to ensure html special characters are properly returned
+    function hsc($str) { return htmlspecialchars($str); }
 
     // Build the sql
     $sql = 'SELECT * FROM houses WHERE county=:county';
 
     // Parameters for sql statement
-    $parameters = ['county'=>$_POST['county']];
+    if (!empty($_POST['county'])) {
+      $parameters = ['county'=>$_POST['county']];
+    } else {
+      $parameters = ['county'=>'Milwaukee'];
+    }
 
     // Add any additional parameters
-    if ($_POST['city'] != 'Any') {
+    if (!empty($_POST['city']) && $_POST['city'] != 'Any') {
       $sql .= ' AND city=:city';
-      $parameters += ['city'=>$_POST['city']];
+      $parameters['city'] = $_POST['city'];
     }
-    if ($_POST['bedrooms'] != 'Any') {
+    if (!empty($_POST['bedrooms']) && $_POST['bedrooms'] != 'Any') {
       $sql .= ' AND bedrooms>=:bedrooms';
-      $parameters += ['bedrooms'=>$_POST['bedrooms']];
+      $parameters['bedrooms'] = $_POST['bedrooms'];
     }
-    if ($_POST['bathrooms'] != 'Any') {
+    if (!empty($_POST['bathrooms']) && $_POST['bathrooms'] != 'Any') {
       $sql .= ' AND bathrooms>=:bathrooms';
-      $parameters += ['bathrooms'=>$_POST['bathrooms']];
+      $parameters['bathrooms'] = $_POST['bathrooms'];
     }
 
     // Execute query
@@ -70,17 +77,17 @@ require_once('dbconn.php');
       // Display listings in containers
       while ($row = $stmt->fetch()) {
         echo '<div class="flex-container">'.PHP_EOL;
-        echo '<div><image src="houseimages/'.$row['image'].'" /></div>'.PHP_EOL;
+        echo '<div><image src="houseimages/'.hsc($row['image']).'" /></div>'.PHP_EOL;
         echo '  <div>'.PHP_EOL;
         echo '    <table style="margin: 1em;">'.PHP_EOL;
         echo '      <tr>'.PHP_EOL;
         echo '        <td>Address: </td>'.PHP_EOL;
-        echo '        <td>'.$row['address'].'<br />'.PHP_EOL;
-        echo '            '.$row['city'].', '.$row['state'].'</td>'.PHP_EOL;
+        echo '        <td>'.hsc($row['address']).'<br />'.PHP_EOL;
+        echo '            '.hsc($row['city']).', '.hsc($row['state']).'</td>'.PHP_EOL;
         echo '      </tr>'.PHP_EOL;
         echo '      <tr>'.PHP_EOL;
         echo '        <td>County: </td>'.PHP_EOL;
-        echo '        <td>'.$row['county'].'</td>'.PHP_EOL;
+        echo '        <td>'.hsc($row['county']).'</td>'.PHP_EOL;
         echo '      </tr>'.PHP_EOL;
         echo '      <tr>'.PHP_EOL;
         echo '        <td>Bedrooms: </td>'.PHP_EOL;
@@ -92,7 +99,7 @@ require_once('dbconn.php');
         echo '      </tr>'.PHP_EOL;
         echo '      <tr>'.PHP_EOL;
         echo '        <td>Description: </td>'.PHP_EOL;
-        echo '        <td>'.$row['description'].'</td>'.PHP_EOL;
+        echo '        <td>'.hsc($row['description']).'</td>'.PHP_EOL;
         echo '      </tr>'.PHP_EOL;
         echo '      <tfoot>'.PHP_EOL;
         echo '        <tr>'.PHP_EOL;
