@@ -31,9 +31,6 @@ require_once('dbconn.php');
       exit('<h4 class="alert">No query data. Please search from <a href="index.php">this</a> page.</h4></body></html>');
     }
 
-    // Function to ensure html special characters are properly returned
-    function hsc($str) { return htmlspecialchars($str); }
-
     // Build the sql
     $sql = 'SELECT * FROM houses WHERE county=:county';
 
@@ -49,11 +46,11 @@ require_once('dbconn.php');
       $sql .= ' AND city=:city';
       $parameters['city'] = $_POST['city'];
     }
-    if (!empty($_POST['bedrooms']) && $_POST['bedrooms'] != 'Any') {
+    if (isset($_POST['bedrooms']) && $_POST['bedrooms'] != 'Any') {
       $sql .= ' AND bedrooms>=:bedrooms';
       $parameters['bedrooms'] = $_POST['bedrooms'];
     }
-    if (!empty($_POST['bathrooms']) && $_POST['bathrooms'] != 'Any') {
+    if (isset($_POST['bathrooms']) && $_POST['bathrooms'] != 'Any') {
       $sql .= ' AND bathrooms>=:bathrooms';
       $parameters['bathrooms'] = $_POST['bathrooms'];
     }

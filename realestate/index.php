@@ -32,9 +32,6 @@ require_once('dbconn.php');
     if (!$row = $stmt->fetch()) {
       exit('<h4 class="alert">No houses available in database</h4>');
     }
-
-    // Function to ensure html special characters are properly returned
-    function hsc($str) { return htmlspecialchars($str); }
     ?>
 
     <!-- Content -->

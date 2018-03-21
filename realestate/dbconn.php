@@ -22,3 +22,7 @@ try {
 catch (PDOException $e) {
     echo 'Connection failed: '.$e->getMessage();
 }
+
+
+// Function to ensure html special characters are properly displayed
+function hsc($str) { return htmlspecialchars($str); }
