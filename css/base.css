@@ -109,3 +109,25 @@ input[type=text] {
   color: cyan;
   background-color: black;
 }
+.flex-container {
+  display: flex;
+  background-color: lightgray;
+  border: 3px double black;
+  border-radius: 3px;
+  padding: .5em 1em;
+  overflow: hidden;
+  box-shadow: 5px 5px 8px gray;
+}
+.flex-container:hover {
+  border: 3px double blue;
+}
+.flex-container img {
+  border: 1px solid black;
+  float: left;
+}
+.flex-container tr td:first-child {
+  text-align: right;
+  vertical-align: top;
+  padding-right: 1em;
+  font-weight: bold;
+}
