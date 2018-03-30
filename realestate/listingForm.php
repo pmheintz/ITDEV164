@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <?php
+// Include db connection (Used require because it terminates the script on error)
+require_once('dbconn.php');
 // Create empty array to hold errors
 $errors = [];
 // Variable to determine if successfully added
@@ -47,8 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $errors['fileToUpload'] = 'Listing added, but an error occured and the image wasn\'t uploaded';
       }
 
-      // Include db connection (Used require because it terminates the script on error)
-      require_once('dbconn.php');
       // Base SQL statement
       $sql = "INSERT INTO houses (image, cost, address, city, state, bedrooms, bathrooms, description, county) "
               ."VALUES (:image, :cost, :address, :city, :state, :bedrooms, :bathrooms, :description, :county)";
@@ -66,8 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo '<h4 class="alert">ERROR!</h4><p>Error message: '.$e->getMessage().'</p>';
       }
 
-      // Clear pdo and mark as added
-      $pdo = null;
+      // Mark as added
       $added = true;
     }
   } else {
@@ -101,16 +100,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <!-- Content -->
     <fieldset <?php if ($added) { echo 'disabled'; } ?>>
       <legend><?php if ($added) { echo '<span class="alert">Listing added</span>'; } else { echo 'Add a listing'; } ?></legend>
-      <form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" enctype="multipart/form-data">
+      <form method="post" action="<?php echo hsc($_SERVER['PHP_SELF']);?>" enctype="multipart/form-data">
         <table>
           <tr>
             <td><label>Address: </label></td>
-            <td><input type="text" name="address" value="<?php if (isset($_POST['address'])) { echo $_POST['address']; } ?>"></td>
+            <td><input type="text" name="address" value="<?php if (isset($_POST['address'])) { echo hsc($_POST['address']); } ?>"></td>
           </tr>
           <tr><td><span class="alert"><?php if (!empty($errors['address'])) { echo $errors['address']; } ?></span><td></tr>
           <tr>
             <td><label>City: </label></td>
-            <td><input type="text" name="city" value="<?php if (isset($_POST['city'])) { echo $_POST['city']; } ?>"></td>
+            <td><input type="text" name="city" value="<?php if (isset($_POST['city'])) { echo hsc($_POST['city']); } ?>"></td>
           </tr>
           <tr><td><span class="alert"><?php if (!empty($errors['city'])) { echo $errors['city']; } ?></span><td></tr>
           <tr>
@@ -152,12 +151,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           </tr>
           <tr>
             <td><label>Asking Price <br /><span class="primary">(No commas or cents): </label></td>
-            <td><input type="text" name="cost" value="<?php if (isset($_POST['cost'])) { echo $_POST['cost']; } ?>"></td>
+            <td><input type="text" name="cost" value="<?php if (isset($_POST['cost'])) { echo hsc($_POST['cost']); } ?>"></td>
           </tr>
           <tr><td><span class="alert"><?php if (!empty($errors['cost'])) { echo $errors['cost']; } ?></span><td></tr>
           <tr>
             <td><label>Description: </label></td>
-            <td><textarea name="description" rows="6" cols="50"  <?php if (empty($_POST['description'])) { echo 'placeholder="Please enter a brief description..."'; } ?>><?php if (isset($_POST['description'])) { echo $_POST['description']; } ?></textarea></td>
+            <td><textarea name="description" rows="6" cols="50"  <?php if (empty($_POST['description'])) { echo 'placeholder="Please enter a brief description..."'; } ?>><?php if (isset($_POST['description'])) { echo hsc($_POST['description']); } ?></textarea></td>
           </tr>
           <tr><td><span class="alert"><?php if (!empty($errors['description'])) { echo $errors['description']; } ?></span><td></tr>
           <tr>
@@ -173,6 +172,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       </form>
     </fieldset>
 
-    <?php if ($added) { echo '<h4 class="primary">'.$count.' listing added.</h4>'.PHP_EOL.'<p><a href="index.php">Return to search.</a></p>'; }?>
+    <?php if ($added) { echo '<h4 class="primary">'.$count.' listing added.</h4>'.PHP_EOL.'<p><a href="index.php">Return to search.</a></p>'; }
+      // Clear PDO object
+      $pdo = null;
+    ?>
   </body>
   </html>
