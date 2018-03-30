@@ -74,7 +74,7 @@ require_once('dbconn.php');
       // Display listings in containers
       while ($row = $stmt->fetch()) {
         echo '<div class="flex-container">'.PHP_EOL;
-        echo '<div><image src="houseimages/'.hsc($row['image']).'" /></div>'.PHP_EOL;
+        echo '<div><image src="../../uploads/houses/'.hsc($row['image']).'" /></div>'.PHP_EOL;
         echo '  <div>'.PHP_EOL;
         echo '    <table style="margin: 1em;">'.PHP_EOL;
         echo '      <tr>'.PHP_EOL;
