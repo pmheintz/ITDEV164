@@ -84,6 +84,22 @@ fieldset {
 .listingOverview img {
 	max-height: 6em;
 }
+.userListings {
+	border-collapse: collapse;
+}
+.userListings tr:nth-child(even) {
+	background-color: #92c5ff;
+}
+.userListings th, .userListings td {
+	padding-right: 1em;
+	border: 1px solid black;
+}
+.userListings th {
+	background-color: black;
+	color: white;
+}
+.userListings td {
+}
 footer {
 	position:fixed;
 	left:0px;

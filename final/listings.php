@@ -1,4 +1,7 @@
-<?php session_start(); ?>
+<?php 
+session_start(); 
+require_once('dbconn.php');
+?>
 <!DOCTYPE html>
 <html lang="en-US">
   <head>
@@ -10,10 +13,13 @@
     <link rel="stylesheet" type="text/css" href="css/base.css" />
   </head>
   <body>
-    <?php include('headerNav.php'); ?>
+    <?php 
+    include('headerNav.php');
+    $listings = getListings('all', $pdo);
+     ?>
     <section>
       <h3>For sale listings</h3>
-      <h4>Current number of guitars/basses for sale: </h4>
+      <h4>Current number of guitars/basses for sale: <?php echo $listings['rows']; ?></h4>
 
       <!-- Form to narrow results -->
       <fieldset>
@@ -70,7 +76,7 @@
               <option value="blue">Blue</option>
               <option value="green">Green</option>
               <option value="red">Red</option>
-              <option value="yellow">Yellow/Wood</option>
+              <option value="wood">Wood</option>
               <option value="other">Other</option>
             </select>
             </div>
@@ -91,6 +97,38 @@
     </section>
 
     <!-- Listings -->
+    <section class="listingOverview">
+    <?php  
+    if ($listings['rows'] != 0) {
+      unset($listings['rows']);
+      foreach ($listings as $listing) {
+      echo '<a href="#'.$listing['listingId'].'">';
+      echo '<div class="listing row">';
+      echo '  <br />';
+      echo '  <div class="col-11">';
+      echo '    <p>';
+      echo '      <b>Manufactorer: </b>'.$listing['make'].'<br />';
+      echo '      <b>Model: </b>'.$listing['model'].'<br />';
+      echo '      <b>Type: </b>'.$listing['type'].'<br />';
+      echo '      <b>Asking Price: </b>'.$listing['price'].'<br />';
+      echo '      Click for more details';
+      echo '    </p>';
+      echo '  </div>';
+      echo '  <div class="col-1">';
+      echo '    <br />';
+      echo '    <img src="../../uploads/sellerImgs/'.$listing['photo'].'" />';
+      echo '  </div>';
+      echo '</div>';
+      echo '</a>';
+      echo '<hr />';
+      }
+    } else {
+      echo '<h3>Sorry, currently nothing is for sale.</h3>';
+    }
+    ?>
+    </section>
+
+    <!--
     <section class="listingOverview">
       <a href="#">
       <div class="listing row">
@@ -152,6 +190,7 @@
       </a>
       <hr />
     </section>
+  -->
     <?php include('footer.php'); ?>
   </body>
 

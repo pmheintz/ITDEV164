@@ -1,4 +1,4 @@
-<?php session_start(); $_SESSION['pgsLoggedIn'] = true; ?>
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en-US">
   <head>
@@ -18,6 +18,13 @@
       <div class="row">
         <div class="col-6" id="login">
           <h4 style="text-align: center;">Want to buy or sell something?<br />Sign up here</h4>
+          <?php 
+          if(!empty($_SESSION['errors'])) { 
+            foreach ($_SESSION['errors'] as $error) {
+              echo '<p style="color: red; margin: .25em;">'.$error.'</p>'.PHP_EOL;
+            }
+            unset($_SESSION['errors']);
+          }?>
           <form name="signup" id="signup" action="register.php" method="post">
             <fieldset style="border: none;" 
             <?php if (isset($_SESSION['pgsLoggedIn']) && $_SESSION['pgsLoggedIn'] === true) { echo 'disabled="disabled">'.PHP_EOL.
@@ -25,15 +32,18 @@
             <table>
               <tr>
                 <td>First Name: </td>
-                <td><input type="text" name="fname" required/></td>
+                <td><input type="text" name="fname" required
+                  <?php if(isset($_SESSION['fname'])) { echo 'value="'.$_SESSION['fname'].'"'; } ?>/></td>
               </tr>
               <tr>
                 <td>Last Name: </td>
-                <td><input type="text" name="lname" required/></td>
+                <td><input type="text" name="lname" required
+                  <?php if(isset($_SESSION['lname'])) { echo 'value="'.$_SESSION['lname'].'"'; } ?>/></td>
               </tr>
               <tr>
                 <td>Email: </td>
-                <td><input type="email" name="email" required/></td>
+                <td><input type="email" name="email" required
+                  <?php if(isset($_SESSION['email'])) { echo 'value="'.$_SESSION['email'].'"'; } ?>/></td>
               </tr>
               <tr>
                 <td>Password: </td>
@@ -41,7 +51,7 @@
               </tr>
               <tr>
                 <td>Confirm Password: </td>
-                <td><input type="password" name="cnfPassword" id="cnfPassword" /></td>
+                <td><input type="password" name="cnfPassword" id="cnfPassword" required/></td>
               </tr>
               <tr>
                 <td id="alert" style="color: red;"></td>
@@ -52,7 +62,16 @@
         </div>
         <div class="col-6">
           <h4 style="text-align: center;">Already registered?<br />Log in here</h4>
-          <form name="login" id="loginForm" action="index.php" method="post">
+          <?php 
+          $loginErrors = [];
+          if(!empty($_SESSION['loginFail'])) { 
+            $loginErrors = $_SESSION['loginFail'];
+            unset($_SESSION['loginFail']);
+            }
+            foreach ($loginErrors as $loginErr) {
+              echo '<p style="color: red; margin: .25em;">'.$loginErr.'</p>'.PHP_EOL;
+            }?>
+          <form name="login" id="loginForm" action="login_proc.php" method="post">
             <table>
               <tr>
                 <td>Email: </td>
@@ -63,13 +82,20 @@
                 <td><input type="password" name="loginPassword" id="loginPassword" required/></td>
               </tr>
               <tr>
+                <td></td>
+                <td><input type="hidden" name="returnUrl" 
+                  <?php if (isset($_SESSION['returnUrl'])) { echo 'value="'.$_SERVER['HTTP_REFERER'].'"'; } else { echo 'value="sell.php?page=sell"'; } ?>
+                  ></td>
+              </tr>
+              <tr>
                 <td id="loginAlert" style="color: red;"></td>
-                <td><input type="submit" name="login" value="Login" id="loginBtn" required/>
+                <td><input type="submit" name="login" value="Login" id="loginBtn"/>
             </table>
             </table>
 
         </div>
       </div>
+      <!-- Password confimation JS -->
       <script type="text/javascript">
         $(document).ready(function(){
           $("#cnfPassword").keyup(function(){
