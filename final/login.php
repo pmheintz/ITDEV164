@@ -84,7 +84,7 @@
               <tr>
                 <td></td>
                 <td><input type="hidden" name="returnUrl" 
-                  <?php if (isset($_SESSION['returnUrl'])) { echo 'value="'.$_SERVER['HTTP_REFERER'].'"'; } else { echo 'value="sell.php?page=sell"'; } ?>
+                  <?php if (isset($_SESSION['loginReturnPage'])) { echo 'value="'.$_SESSION['loginReturnPage'].'"'; } else { echo 'value="sell.php?page=sell"'; } ?>
                   ></td>
               </tr>
               <tr>

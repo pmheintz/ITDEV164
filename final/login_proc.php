@@ -54,11 +54,11 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
 		}
 	} else {
 		$pdo = null;
-		header('Location: login.php');
+		header('Location: login.php?page=login');
 		exit();
 	}
 } else { // Page not accessed through login screen
 	$pdo = null;
-	header('Location: login.php');
+	header('Location: login.php?page=login');
 }
 ?>

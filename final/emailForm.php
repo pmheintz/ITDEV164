@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once('dbconn.php');
-$_SESSION['detailPage'] = 'detailView.php?'.$_SERVER['QUERY_STRING'];
+$_SESSION['loginReturnPage'] = 'detailView.php?'.$_SERVER['QUERY_STRING'];
 $sent = false;
 if (isset($_POST['sent'])) { $sent = $_POST['sent']; }
 ?>
@@ -20,7 +20,7 @@ if (isset($_POST['sent'])) { $sent = $_POST['sent']; }
     <?php include('headerNav.php');
 	// Redirect if not logged in
 	if (!isset($_SESSION['pgsLoggedIn']) || !$_SESSION['pgsLoggedIn']) {
-		echo '<script>if (!confirm("You must register or login to email a seller.")) { window.location = "detailView.php?page=listings&listingId='.$_GET['listingId'].'"; } else { window.location = "login.php?page=login"; }</script>';
+		exit('<script>if (!confirm("You must register or login to email a seller.")) { window.location = "detailView.php?page=listings&listingId='.$_GET['listingId'].'"; } else { window.location = "login.php?page=login"; }</script>');
 	} else {
 		if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			$listing = getOneListing($_GET['listingId'], $pdo);
@@ -81,7 +81,7 @@ if (isset($_POST['sent'])) { $sent = $_POST['sent']; }
     		$("#cancel").on("click", function(e){
     			e.preventDefault();
     			if (confirm("Discard all changes?")) {
-    				window.location.href = "<?php echo $_SESSION['detailPage']; ?>";
+    				window.location.href = "<?php echo $_SESSION['loginReturnPage']; ?>";
     			}
     		});
     	});

@@ -71,7 +71,6 @@ function getFilteredListings($params, $pdo) {
 		}
 		$sql = substr($sql, 0, -5);
 	}
-
 	try {
 		// Prepare statement
 		$stmt = $pdo->prepare($sql);
