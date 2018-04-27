@@ -26,7 +26,7 @@ catch (PDOException $e) {
 // Function to ensure html special characters are properly displayed
 function hsc($str) { return htmlspecialchars($str); }
 
-// Function to get listings
+// Function to get listings for a user or all users
 function getListings($userId, $pdo) {
 	$listings = [];
 	// Base sql statement
@@ -53,6 +53,63 @@ function getListings($userId, $pdo) {
 	}
 	$pdo = null;
 	return $listings;
+}
+
+// Function to get filtered listings
+function getFilteredListings($params, $pdo) {
+	$listings = [];
+	$execute = [];
+	// Complete where clause and create parameters array
+	$sql = 'SELECT * FROM guitars';
+	if (!empty($params)) {
+		$sql .= ' WHERE ';
+		foreach ($params as $key => $value) {
+			$comp = '=';
+			if ($key == 'price') { $comp = '<='; }
+			$sql .= $key.$comp.':'.$key.' AND ';
+			$execute[':'.$key] = $value;
+		}
+		$sql = substr($sql, 0, -5);
+	}
+
+	try {
+		// Prepare statement
+		$stmt = $pdo->prepare($sql);
+		// Execute statement
+		$stmt->execute($execute);
+		$i = 0;
+		while ($row = $stmt->fetch()) {
+			$listings[$i] = $row;
+			$i++;
+		}
+		// Get number of listings
+		$listings['rows'] = $stmt->rowCount();
+	} catch (PDOException $e) {
+		$listings['error'] = 'Database error: '.$e->getMessage();
+	}
+	$pdo = null;
+	return $listings;
+}
+
+// Function to get distinct records from a column
+function getDistinct($col, $pdo) {
+	// Base sql
+	$sql = "SELECT DISTINCT $col FROM guitars";
+	$column = [];
+	try {
+		// Prepare statement
+		$stmt = $pdo->prepare($sql);
+		// Execute statement
+		$stmt->execute();
+		// Fetch results
+		while ($row = $stmt->fetch()) {
+			array_push($column, $row[$col]);
+		}
+	} catch (PDOException $e) {
+		return 'Database error: '.$e->getMessage();
+	}
+	$pdo = null;
+	return $column;
 }
 
 // Function to get a single listing
@@ -96,6 +153,7 @@ function createPlaceholder($userId, $pdo) {
     return $listing;
 }
 
+/* No longer needed?
 // Function to add a row
 function addListing($params, $imgName, $userId, $pdo) {
 	// Base sql
@@ -113,6 +171,7 @@ function addListing($params, $imgName, $userId, $pdo) {
     }
     return true;
 }
+*/
 
 // Function to update a row
 function updateListing($params, $listingId, $pdo) {
@@ -132,6 +191,7 @@ function updateListing($params, $listingId, $pdo) {
     return true;
 }
 
+/*
 // Function to return last listing ID
 function getLastListingId ($sellerId, $pdo) {
 	$sql = "SELECT listingId FROM guitars WHERE sellerId=$sellerId ORDER BY listingId DESC LIMIT 1;";
@@ -146,6 +206,7 @@ function getLastListingId ($sellerId, $pdo) {
 		return $e->getMessage();
     }
 }
+*/
 
 // Function to delete a row
 function deleteListing ($listingId, $pdo) {

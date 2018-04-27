@@ -187,7 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	      				<input type="hidden" name="listingId" value="<?php if (isset($row['listingId'])) { echo $row['listingId']; } ?>" /></td>
 	      		</tr>
 	      		<tr>
-	      			<td>Choose a Photo: <?php if (isset($row['photo']) && $row['photo'] != 'noImg.png') { echo '<a href="../../uploads/sellerImgs/'.$row['photo'].'" target="_blank">Current Photo</a>'; } ?></td>
+	      			<td>Choose a Photo: <?php if (isset($row['photo']) && $row['photo'] != 'noImg.png') { echo '<a href="../../uploads/sellerImgs/'.$row['photo'].'" target="_blank">Current Photo</a><br>'; if (!$added) { echo '<p style="color: red; margin: .2em;">* To keep previous image, please upload it again * </p>'; } } ?></td>
 	      			<td><input type="file" name="fileToUpload" id="fileToUpload"></td>
 	      		</tr>
 	      		<tr>
