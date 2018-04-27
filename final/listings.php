@@ -9,6 +9,7 @@ if (isset($_GET['model']) && $_GET['model'] != 'all') { $filterParams['model'] =
 if (isset($_GET['numStrings']) && $_GET['numStrings'] != 'all') { $filterParams['numStrings'] = $_GET['numStrings']; }
 if (isset($_GET['color']) && $_GET['color'] != 'all') { $filterParams['color'] = $_GET['color']; }
 if (isset($_GET['price']) && $_GET['price'] != 'all') { $filterParams['price'] = $_GET['price']; }
+$_SESSION['listingResultsPage'] = 'listings.php?'.$_SERVER['QUERY_STRING'];
 ?>
 <!DOCTYPE html>
 <html lang="en-US">

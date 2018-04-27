@@ -91,6 +91,27 @@ function getFilteredListings($params, $pdo) {
 	return $listings;
 }
 
+// Function to get a user's info
+function getUser($userId, $pdo) {
+	$row = [];
+	// Base SQL
+	$sql = "SELECT fname, lname, email FROM users WHERE userId=:userId";
+
+	try {
+		// Prepare Statement
+		$stmt = $pdo->prepare($sql);
+		// Execute statement
+		$stmt->execute([':userId'=>$userId]);
+		// Fetch results
+		$row = $stmt->fetch();	
+	} catch (PDOException $e) {
+		$pdo = null;
+		exit($e);
+	}
+	$pdo = null;
+	return $row;
+}
+
 // Function to get distinct records from a column
 function getDistinct($col, $pdo) {
 	// Base sql

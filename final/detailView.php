@@ -43,7 +43,7 @@ if (isset($_GET['listingId']) && !empty($_GET['listingId']) && is_numeric($_GET[
       			<b>Asking Price: </b><?php echo $listing['price']; ?>
       		</p>
       		<h4>
-      			Interested? Click here to email the seller!
+      			<a href="emailForm.php?page=listings&listingId=<?php echo $listing['listingId']; ?>">Interested? Click here to email the seller!</a>
       		</h4>
       	</div>
       	<div class="col-2">
@@ -51,7 +51,7 @@ if (isset($_GET['listingId']) && !empty($_GET['listingId']) && is_numeric($_GET[
       			<img src="../../uploads/sellerImgs/<?php echo $listing['photo']; ?>" /></a>
       	</div>
       </div>
-      <a href="<?php echo $_SERVER['HTTP_REFERER']; ?>">Return to listings</a>
+      <a href="<?php if (isset($_SESSION['listingResultsPage'])) { echo $_SESSION['listingResultsPage']; } else { echo 'listings.php?page=listings'; }?>">Return to listings</a>
     </section>
     <?php include('footer.php'); ?>
   </body>
