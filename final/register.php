@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	// If no errors, register user and mark them as logged in
 	if (empty($errors)) {
 		// Encrypt password 
-		// *NOTE* MATC server runs php 5.4 so sha1 is used opposed to password_hash
+		// *NOTE* MATC server currently runs php 5.4 so sha1 is used opposed to password_hash
 		$pwd = sha1($_POST['password']);
 		// Base sql statement
 		$sql = "INSERT INTO users (fname, lname, email, password) VALUES (:fname, :lname, :email, :password)";
@@ -27,9 +27,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			// Execute statement
 			$stmt->execute(['fname'=>$_POST['fname'], 'lname'=>$_POST['lname'], 'email'=>$_POST['email'], 'password'=>$pwd]);
 
-			// Set session to logged in
+			// Log new user in
 			if ($stmt->rowCount() > 0) {
-				$_SESSION['pgsLoggedIn'] = true;
+				$sql = "SELECT * FROM users WHERE (email=:email AND password=:password)";
+				try {
+					// Prepare statement
+					$stmt = $pdo->prepare($sql);
+					// Execute query
+					$stmt->execute(['email'=>$_POST['email'], 'password'=>$pwd]);
+					// Get rows
+					$rows = $stmt->rowCount();
+					if ($rows >= 1) {
+						$rows = $stmt->fetch();
+						$_SESSION['pgsLoggedIn'] = true;
+						$_SESSION['userId'] = $rows['userId'];
+						$_SESSION['fname'] = $rows['fname'];
+						$_SESSION['lname'] = $rows['lname'];
+						$_SESSION['email'] = $rows['email'];
+						$pdo = null;
+					}
+				} catch (PDOException $e) {
+					$pdo = null;
+					exit ('There was an error logging you into your new account!');
+				}
 			}
 		} catch (PDOException $e) {
 			$_SESSION += $_POST;

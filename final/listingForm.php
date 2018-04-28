@@ -19,7 +19,10 @@ if (isset($_GET['listingId'])) {
 	if ($_SESSION['userId'] !== $row['sellerId']) {
 		header('Location: sell.php?page=sell');
 	}
+} else {
+	$row['listingId'] = -1;
 }
+$placeholderCreated = false;
 // Check if POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	// Check required fields
@@ -33,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	// If no errors, add/update listing
 	if (empty($errors)) {
 		// Create placeholder row if new entry
-		if (empty($row['listingId'])) {
+		if ($row['listingId'] == -1) {
 			$row['listingId'] = createPlaceholder($_SESSION['userId'], $pdo);
 			$placeholderCreated = true;
 		}

@@ -162,7 +162,7 @@ function createPlaceholder($userId, $pdo) {
 		$stmt = $pdo->prepare($sql);
 
 		// Execute statement
-		$stmt->execute(['sellerId'=>$userId, 'make'=>'Creating Listing...', 'model'=>'Creating Listing...', 'type'=>'electric', 'numStrings'=>6, 'color'=>'Creating Listing...', 'condition'=>5, 'description'=>'Creating Listing...', 'price'=>'Creating Listing...', 'photo'=>'noImg.png']);
+		$stmt->execute(['sellerId'=>$userId, 'make'=>'Creating Listing...', 'model'=>'Creating Listing...', 'type'=>'electric', 'numStrings'=>6, 'color'=>'Creating Listing...', 'condition'=>5, 'description'=>'Creating Listing...', 'price'=>0, 'photo'=>'noImg.png']);
 
 		// Listing ID
 		$listing = $pdo->lastInsertId();
@@ -201,6 +201,8 @@ function updateListing($params, $listingId, $pdo) {
 	try {
 		// Prepare statement
 		$stmt = $pdo->prepare($sql);
+		$params['make'] = ucwords($params['make']);
+		$params['model'] = ucwords($params['model']);
 
 		// Execute statement
 		$stmt->execute(['make'=>$params['make'], 'model'=>$params['model'], 'type'=>$params['type'], 'numStrings'=>$params['numStrings'], 'color'=>$params['color'], 'condition'=>$params['condition'], 'description'=>$params['description'], 'price'=>$params['price'], 'photo'=>$params['photo']]);
