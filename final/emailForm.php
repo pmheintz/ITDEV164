@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once('dbconn.php');
-$_SESSION['loginReturnPage'] = 'detailView.php?'.$_SERVER['QUERY_STRING'];
+//$_SESSION['detailReturnPage'] = 'detailView.php?'.$_SERVER['QUERY_STRING'];
 $sent = false;
 if (isset($_POST['sent'])) { $sent = $_POST['sent']; }
 ?>
@@ -37,7 +37,7 @@ if (isset($_POST['sent'])) { $sent = $_POST['sent']; }
 		    if ($email && $replyEmail) {
 		    	$to = $seller['email'];
 		    	if (isset($_POST['cc']) && $_POST['cc']) { $to .= ', '.$replyEmail; }
-		    	$from = 'paul@mca.matc.edu';
+		    	$from = 'Paul@mca.matc.edu';
 		    	$message = $_POST['message'];
 		    	$headers = "From: $from\r\nReply-to: $replyEmail";
 		    	$sent = mail($to, $subject, $message, $headers);
@@ -72,7 +72,7 @@ if (isset($_POST['sent'])) { $sent = $_POST['sent']; }
   		</form>
 		</fieldset>
 		<?php
-		if ($sent) { echo '<a href="'.$_SESSION['detailPage'].'">Return to listing.</a>'; }
+		if ($sent) { echo '<a href="'.$_SESSION['detailReturnPage'].'">Return to listing.</a>'; }
 		?>
     </section>
     <?php include('footer.php'); ?>
@@ -81,7 +81,7 @@ if (isset($_POST['sent'])) { $sent = $_POST['sent']; }
     		$("#cancel").on("click", function(e){
     			e.preventDefault();
     			if (confirm("Discard all changes?")) {
-    				window.location.href = "<?php echo $_SESSION['loginReturnPage']; ?>";
+    				window.location.href = "<?php echo $_SESSION['detailReturnPage']; ?>";
     			}
     		});
     	});

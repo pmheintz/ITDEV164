@@ -1,4 +1,5 @@
-<?php session_start(); ?>
+<?php session_start();
+if (!isset($_SESSION['detailReturnPage'])) { $_SESSION['detailReturnPage'] = 'sell.php?page=sell'; }?>
 <!DOCTYPE html>
 <html lang="en-US">
   <head>

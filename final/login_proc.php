@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
 				$_SESSION['lname'] = $rows['lname'];
 				$_SESSION['email'] = $rows['email'];
 				$pdo = null;
-				header('Location: '.$_REQUEST['returnUrl']);
+				header('Location: '.$_SESSION['detailReturnPage']);
 			} else { // Login failed
 				$_SESSION['loginFail']['failed'] = 'Password and email do not match!';
 				$pdo = null;

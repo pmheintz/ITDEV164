@@ -173,26 +173,6 @@ function createPlaceholder($userId, $pdo) {
     return $listing;
 }
 
-/* No longer needed?
-// Function to add a row
-function addListing($params, $imgName, $userId, $pdo) {
-	// Base sql
-	$sql = "INSERT INTO guitars (sellerId, make, model, `type`, numStrings, color, `condition`, description, price, photo) VALUES (:sellerId, :make, :model, :type, :numStrings, :color, :condition, :description, :price, :photo)";
-
-	try {
-		// Prepare statement
-		$stmt = $pdo->prepare($sql);
-
-		// Execute statement
-		$stmt->execute(['sellerId'=>$userId, 'make'=>$params['make'], 'model'=>$params['model'], 'type'=>$params['type'], 'numStrings'=>$params['numStrings'], 'color'=>$params['color'], 'condition'=>$params['condition'], 'description'=>$params['description'], 'price'=>$params['price'], 'photo'=>$imgName]);
-    } catch (PDOException $e) {
-    	$pdo = null;
-	    exit($e);
-    }
-    return true;
-}
-*/
-
 // Function to update a row
 function updateListing($params, $listingId, $pdo) {
 	// Base sql
@@ -212,23 +192,6 @@ function updateListing($params, $listingId, $pdo) {
     }
     return true;
 }
-
-/*
-// Function to return last listing ID
-function getLastListingId ($sellerId, $pdo) {
-	$sql = "SELECT listingId FROM guitars WHERE sellerId=$sellerId ORDER BY listingId DESC LIMIT 1;";
-	try {
-		$stmt = $pdo->prepare($sql);
-		$stmt->execute();
-		$row = $stmt->fetch();
-		$pdo = null;
-		return $row['listingId'];
-	} catch (PDOException $e) {
-		$pdo = null;
-		return $e->getMessage();
-    }
-}
-*/
 
 // Function to delete a row
 function deleteListing ($listingId, $pdo) {

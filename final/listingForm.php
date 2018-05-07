@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		    	unlink($targetFile);
 		    }
 			// Check image size (Max size 500000 bytes)
-			if ($_FILES["fileToUpload"]["size"] > 500000) {
+			if ($_FILES["fileToUpload"]["size"] > 1000000) {
 				$imgErrors['fileToUpload'] = 'Photo exceeds maximum size. <br />Please choose a smaller photo.';
 			}
 			// Check if errors occured
@@ -130,11 +130,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	      	<table>
 	      		<tr>
 	      			<td>Manufactorer: </td>
-	      			<td><input type="text" name="make" value="<?php if (isset($row['make'])) { echo $row['make']; } ?>" required/></td>
+	      			<td><input type="text" name="make" value="<?php if (isset($row['make'])) { echo hsc($row['make']); } ?>" required/></td>
 	      		</tr>
 	      		<tr>
 	      			<td>Model: </td>
-	      			<td><input type="text" name="model" value="<?php if (isset($row['model'])) { echo $row['model']; } ?>" required/></td>
+	      			<td><input type="text" name="model" value="<?php if (isset($row['model'])) { echo hsc($row['model']); } ?>" required/></td>
 	      		</tr>
 	      		<tr>
 	      			<td>Type: </td>
@@ -149,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	      		</tr>
 	      		<tr>
 	      			<td>Number of Strings: </td>
-	      			<td><input type="number" name="numStrings" value="<?php if (isset($row['numStrings'])) { echo $row['numStrings']; } ?>" required/></td>
+	      			<td><input type="number" name="numStrings" value="<?php if (isset($row['numStrings'])) { echo hsc($row['numStrings']); } ?>" required/></td>
 	      		</tr>
 	      		<tr>
 	      			<td>Base Color: </td>
@@ -181,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	      		<tr>
 	      			<td>Description: </td>
 	      			<td><textarea rows="5" cols="50" name="description" placeholder="Enter a description..."><?php
-	      				if (isset($row['description'])) { echo $row['description']; }
+	      				if (isset($row['description'])) { echo hsc($row['description']); }
 	      			?></textarea></td>
 	      		</tr>
 	      		<tr>

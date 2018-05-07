@@ -81,9 +81,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   <body>
     <?php include('headerNav.php'); ?>
     <section>
-      <h3>Thanks for registering <?php echo $_POST['fname']; ?>!</h3>
-      <p>Feel free to browse the listings <a href="listings.php?page=listings">here</a>,<br />
-      	or add/manage your sales <a href="sell.php?page=sell">here</a>.</p>
+    	<?php if (isset($_SESSION['detailReturnPage'])) { header('Location: '.$_SESSION['detailReturnPage']); } ?>
+	    <h3>Thanks for registering <?php echo $_POST['fname']; ?>!</h3>
+	    <p>Feel free to browse the listings <a href="listings.php?page=listings">here</a>,<br />
+	    	or add/manage your sales <a href="sell.php?page=sell">here</a>.</p>
     </section>
     <?php include('footer.php'); ?>
   </body>

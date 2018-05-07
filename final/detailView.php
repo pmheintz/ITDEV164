@@ -5,6 +5,7 @@ $listing = '';
 $listingFound = false;
 if (isset($_GET['listingId']) && !empty($_GET['listingId']) && is_numeric($_GET['listingId'])) {
 	$listing = getOneListing($_GET['listingId'], $pdo);
+  $_SESSION['detailReturnPage'] = 'detailView.php?'.$_SERVER['QUERY_STRING'];
 	if ($listing !== false) {
 		$listingFound = true;
 	}
@@ -33,14 +34,14 @@ if (isset($_GET['listingId']) && !empty($_GET['listingId']) && is_numeric($_GET[
       <div class="row detailView">
       	<div class="col-10">
       		<p>
-      			<b>Manufactorer: </b><?php echo $listing['make']; ?><br />
-      			<b>Model: </b><?php echo $listing['model']; ?><br />
-      			<b>Type: </b><?php echo $listing['type']; ?><br />
-      			<b>Number of Strings: </b><?php echo $listing['numStrings']; ?><br />
-      			<b>Color: </b><?php echo $listing['color']; ?><br />
-      			<b>Condition: </b><?php echo $listing['condition']; ?>&#47;5<br />
-      			<b>Description: </b><br /><?php echo $listing['description']; ?><br /><br />
-      			<b>Asking Price: </b><?php echo $listing['price']; ?>
+      			<b>Manufactorer: </b><?php echo hsc($listing['make']); ?><br />
+      			<b>Model: </b><?php echo hsc($listing['model']); ?><br />
+      			<b>Type: </b><?php echo hsc($listing['type']); ?><br />
+      			<b>Number of Strings: </b><?php echo hsc($listing['numStrings']); ?><br />
+      			<b>Color: </b><?php echo hsc($listing['color']); ?><br />
+      			<b>Condition: </b><?php echo hsc($listing['condition']); ?>&#47;5<br />
+      			<b>Description: </b><br /><?php echo hsc($listing['description']); ?><br /><br />
+      			<b>Asking Price: </b><?php echo hsc($listing['price']); ?>
       		</p>
       		<h4>
       			<a href="emailForm.php?page=listings&listingId=<?php echo $listing['listingId']; ?>">Interested? Click here to email the seller!</a>
